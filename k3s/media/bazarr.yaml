@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: bazarr
+  name: bazarr
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bazarr
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: bazarr
+    spec:
+      containers:
+        - env:
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: TZ
+              value: America/New_York
+          image: linuxserver/bazarr:latest
+          name: bazarr
+          ports:
+            - containerPort: 6767
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data
+              name: media
+            - mountPath: /config
+              subPath: bazarr-config
+              name: config
+      restartPolicy: Always
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: nfs-media-pvc
+        - name: config
+          persistentVolumeClaim:
+            claimName: local-media-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: bazarr
+  name: bazarr
+  namespace: media
+spec:
+  ports:
+    - name: "6767"
+      port: 6767
+      targetPort: 6767
+  type: LoadBalancer
+  selector:
+    app: bazarr
+

@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gitea
+  name: gitea
+  namespace: sysadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitea
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: gitea
+    spec:
+      containers:
+        - image: gitea/gitea:latest
+          name: gitea
+          env:
+            - name: USER_UID
+              value: "1000"
+            - name: USER_GID
+              value: "1000"
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+            - containerPort: 22
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data
+              subPath: gitea-config
+              name: config
+            - mountPath: /etc/timezone
+              name: timezone
+              readOnly: true
+            - mountPath: /etc/localtime
+              name: localtime
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: local-pvc
+        - name: timezone
+          hostPath:
+            path: /etc/timezone
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gitea
+  name: gitea
+  namespace: sysadmin
+spec:
+  ports:
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+    - name: "22"
+      port: 222
+      targetPort: 22
+  type: LoadBalancer
+  selector:
+    app: gitea
+

@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: z2m
+  name: z2m
+  namespace: smarthome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: z2m
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: z2m
+    spec:
+      containers:
+        - name: z2m
+          env:
+            - name: TZ
+              value: America/New_York
+          image: koenkk/zigbee2mqtt
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /dev/ttyACM0
+              name: sonoff
+            - mountPath: /app/data
+              subPath: z2m-config
+              name: config
+      restartPolicy: Always
+      volumes:
+        - name: sonoff
+          hostPath:
+            path: /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_5cf7ffd9ae12ec11bcfa23c7bd930c07-if00-port0
+        - name: config
+          persistentVolumeClaim:
+            claimName: smarthome-local-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: z2m
+  name: z2m
+  namespace: smarthome
+spec:
+  ports:
+    - name: "8080"
+      port: 8083
+      targetPort: 8080
+  type: LoadBalancer
+  selector:
+    app: z2m

@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: unifi
+  name: unifi
+  namespace: sysadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: unifi
+    spec:
+      containers:
+        - image: lscr.io/linuxserver/unifi-network-application:latest
+          name: unifi
+          env:
+            - name: PUID
+              value: "1000"
+            - name: GUID
+              value: "1000"
+            - name: TZ
+              value: Etc/UTC
+            - name: MONGO_USER
+              value: unifi
+            - name: MONGO_PASS
+              value: EohfGiiLd7sZYMZR
+            - name: MONGO_HOST
+              value: unifi-db
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MONGO_DBNAME
+              value: unifi
+            - name: MONGO_AUTHSOURCE
+              value: admin
+            - name: MEM_LIMIT
+              value: "1024"
+            - name: MEM_STARTUP
+              value: "1024"
+            - name: MONGO_TLS
+              value: ""
+          ports:
+            - containerPort: 8443
+              protocol: TCP
+            - containerPort: 3478
+              protocol: UDP
+            - containerPort: 10001
+              protocol: UDP
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 1900
+              protocol: UDP
+            - containerPort: 8843
+              protocol: TCP
+            - containerPort: 8880
+              protocol: TCP
+            - containerPort: 6789
+              protocol: TCP
+            - containerPort: 5514
+              protocol: UDP 
+          volumeMounts:
+            - mountPath: /config
+              subPath: unifi-config
+              name: config
+      restartPolicy: Always
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: local-pvc        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: unifi
+  name: unifi
+  namespace: sysadmin
+spec:
+  ports:
+    - name: "8443"
+      port: 8443
+      targetPort: 8443
+    - name: "8080"
+      port: 8082
+      targetPort: 8080
+    - name: "3478"
+      port: 3478
+      targetPort: 3478
+    - name: "10001"
+      port: 10001
+      targetPort: 10001
+  type: LoadBalancer
+  selector:
+    app: unifi
+

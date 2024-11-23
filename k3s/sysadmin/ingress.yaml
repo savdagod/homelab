@@ -1,0 +1,41 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: sysadmin-ingress-http
+  namespace: sysadmin
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`prometheus.local.io`)
+      services:
+        - kind: Service
+          name: prometheus
+          port: 9090
+    - kind: Rule
+      match: Host(`gitea.local.io`)
+      services:
+        - kind: Service
+          name: gitea
+          port: 3000
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: sysadmin-ingress-https
+  namespace: sysadmin
+  annotations:
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`unifi.local.io`)
+      services:
+        - kind: Service
+          name: unifi
+          port: 8443
+    
+    

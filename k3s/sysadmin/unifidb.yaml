@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: unifi-db
+  name: unifi-db
+  namespace: sysadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: unifi-db
+    spec:
+      containers:
+        - image: docker.io/mongo:7
+          name: unifi-db
+          env:
+            - name: PUID
+              value: "1000"
+            - name: GUID
+              value: "1000"
+            - name: TZ
+              value: Etc/UTC
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: root
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: XZmrIwp78x8YNr0K
+            - name: MONGO_USER
+              value: unifi
+            - name: MONGO_PASS
+              value: EohfGiiLd7sZYMZR
+            - name: MONGO_DBNAME
+              value: unifi
+            - name: MONGO_AUTHSOURCE
+              value: admin
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data/db
+              subPath: unifi-db-config
+              name: config
+            - mountPath: /docker-entrypoint-initdb.d/init-mongo.sh
+              subPath: unifi-db-config/init-mongo.sh
+              name: config
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: local-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: unifi-db
+  name: unifi-db
+  namespace: sysadmin
+spec:
+  ports:
+    - name: "27017"
+      port: 27017
+      targetPort: 27017
+  type: LoadBalancer
+  selector:
+    app: unifi-db
+

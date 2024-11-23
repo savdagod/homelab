@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: plex
+  name: plex
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plex
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: plex
+    spec:
+      containers:
+        - name: plex
+          env:
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: ADVERTISE_IP
+              value: "http://192.168.1.20:32400,http://plex.local.io"
+            - name: ALLOWED_NETWORKS
+              value: "192.168.1.0/24,192.168.20.0/24,10.42.0.0/16"
+            - name: PLEX_CLAIM
+              value: "claim-GsS6YLqvaMpzsKVZaJfA"
+            - name: TZ
+              value: America/New_York
+          image: plexinc/pms-docker:latest
+          ports:
+            - containerPort: 32400
+              protocol: TCP
+            - containerPort: 3005
+              protocol: TCP
+            - containerPort: 8324
+              protocol: TCP
+            - containerPort: 32469
+              protocol: TCP
+            - containerPort: 1900
+              protocol: UDP
+            - containerPort: 32410
+              protocol: UDP
+            - containerPort: 32412
+              protocol: UDP
+            - containerPort: 32413
+              protocol: UDP
+            - containerPort: 32414
+              protocol: UDP
+          volumeMounts:
+            - mountPath: /data
+              name: media
+            - mountPath: /transcode
+              subPath: transcode
+              name: media
+            - mountPath: /config
+              subPath: plex-config
+              name: config
+      restartPolicy: Always
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: media-pvc
+        - name: config
+          persistentVolumeClaim:
+            claimName: local-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: plex
+  name: plex
+  namespace: media
+spec:
+  ports:
+    - name: "32400"
+      port: 32400
+      targetPort: 32400
+    - name: "3005"
+      port: 3005
+      targetPort: 3005
+    - name: "8324"
+      port: 8324
+      targetPort: 8324
+    - name: "32469"
+      port: 32469
+      targetPort: 32469
+    - name: "1900"
+      port: 1900
+      protocol: UDP
+      targetPort: 1900
+    - name: "32410"
+      port: 32410
+      protocol: UDP
+      targetPort: 32410
+    - name: "32412"
+      port: 32412
+      protocol: UDP
+      targetPort: 32412
+    - name: "32413"
+      port: 32413
+      protocol: UDP
+      targetPort: 32413
+    - name: "32414"
+      port: 32414
+      protocol: UDP
+      targetPort: 32414
+  type: LoadBalancer
+  selector:
+    app: plex   

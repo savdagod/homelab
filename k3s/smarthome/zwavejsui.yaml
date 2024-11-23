@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: zwavejsui
+  name: zwavejsui
+  namespace: smarthome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zwavejsui
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: zwavejsui
+    spec:
+      containers:
+        - name: zwavejsui
+          env:
+            - name: ZWAVEJS_EXTERNAL_CONFIG
+              value: /usr/src/app/store/.config-db
+            - name: TZ
+              value: America/New_York
+          image: zwavejs/zwave-js-ui:latest
+          ports:
+            - containerPort: 8091
+              protocol: TCP
+            - containerPort: 3000
+              protocol: TCP
+          tty: true
+          volumeMounts:
+            - mountPath: /dev/zwave
+              name: zwavestick
+            - mountPath: /usr/src/app/store
+              subPath: zwavejsui-config
+              name: config
+      restartPolicy: Always
+      volumes:
+        - name: zwavestick
+          hostPath:
+            path: /dev/serial/by-id/usb-Silicon_Labs_Zooz_ZST10_700_Z-Wave_Stick_dca42aefc060ec118dfa437625bfaa52-if00-port0
+        - name: config
+          persistentVolumeClaim:
+            claimName: smarthome-local-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: zwavejsui
+  name: zwavejsui
+  namespace: smarthome
+spec:
+  ports:
+    - name: "8089"
+      port: 8089
+      targetPort: 8089
+    - name: "3000"
+      port: "3001"
+      targetPort: 3000
+  type: LoadBalancer
+  selector:
+    app: zwavejsui
