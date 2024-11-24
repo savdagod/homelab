@@ -39,7 +39,7 @@
         },
         "vm":{
             "name": "K3s-VM",
-            "processor_count": 2,
+            "processor_count": 4,
             "memory_size": 4096,
             "net_adapter": "Server LAN",
             "start_action": "StartIfRunning",
@@ -57,36 +57,6 @@
             "name": "FileServer-VM",
             "processor_count": 2,
             "memory_size": 1024,
-            "net_adapter": "Server LAN",
-            "start_action": "Start",
-            "stop_action": "Shutdown"
-        }
-    },
-    {
-        "build":{
-            "type": "import",
-            "img_path": "C:\\Images\\debian-img-base",
-            "vm_dest": "C:\\Virtual Machines\\"
-        },
-        "vm":{
-            "name": "Plex-VM",
-            "processor_count": 4,
-            "memory_size": 4096,
-            "net_adapter": "Server LAN",
-            "start_action": "Start",
-            "stop_action": "Shutdown"
-        }
-    },
-    {
-        "build":{
-            "type": "import",
-            "img_path": "C:\\Images\\debian-img-base",
-            "vm_dest": "C:\\Virtual Machines\\"
-        },
-        "vm":{
-            "name": "Ubiquiti-VM",
-            "processor_count": 2,
-            "memory_size": 2048,
             "net_adapter": "Server LAN",
             "start_action": "Start",
             "stop_action": "Shutdown"
