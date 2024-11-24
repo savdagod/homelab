@@ -8,31 +8,31 @@ spec:
     - web
   routes:
     - kind: Rule
-      match: HostRegexp(`plex.*`)
+      match: Host(`plex.local.io`)
       services:
         - kind: Service
           name: plex
           port: 32400
     - kind: Rule
-      match: HostRegexp(`jackett.*`)
+      match: Host(`jackett.local.io`)
       services:
         - kind: Service
           name: jackett
           port: 9117
     - kind: Rule
-      match: HostRegexp(`radarr.*`)
+      match: Host`radarr.local.io`)
       services:
         - kind: Service
           name: radarr
           port: 7878
     - kind: Rule
-      match: HostRegexp(`sonarr.*`)
+      match: Host(`sonarr.local.io`)
       services:
         - kind: Service
           name: sonarr
           port: 8989
     - kind: Rule
-      match: HostRegexp(`qbittorrent.*`)
+      match: Host(`qbittorrent.local.io`)
       services:
         - kind: Service
           name: qbittorrent
