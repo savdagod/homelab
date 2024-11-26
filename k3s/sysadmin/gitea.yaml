@@ -44,7 +44,7 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: local-pvc
+            claimName: local-sysadmin-pvc
         - name: timezone
           hostPath:
             path: /etc/timezone

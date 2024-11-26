@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: local-sysadmin-pv
+  name: local-pv
   namespace: sysadmin
 spec:
   capacity:
@@ -24,7 +24,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: local-pvc
+  name: local-sysadmin-pvc
   namespace: sysadmin
 spec:
   accessModes:

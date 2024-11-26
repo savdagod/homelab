@@ -72,7 +72,7 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: local-pvc        
+            claimName: local-sysadmin-pvc        
 ---
 apiVersion: v1
 kind: Service

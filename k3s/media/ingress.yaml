@@ -20,7 +20,7 @@ spec:
           name: jackett
           port: 9117
     - kind: Rule
-      match: Host`radarr.local.io`)
+      match: Host(`radarr.local.io`)
       services:
         - kind: Service
           name: radarr
@@ -32,8 +32,15 @@ spec:
           name: sonarr
           port: 8989
     - kind: Rule
-      match: Host(`qbittorrent.local.io`)
+      match: Host(`transmission.local.io`)
       services:
         - kind: Service
-          name: qbittorrent
-          port: 8080
+          name: transmission
+          port: 9091
+    - kind: Rule
+      match: Host(`bazarr.local.io`)
+      services:
+        - kind: Service
+          name: bazarr
+          port: 6767
+
