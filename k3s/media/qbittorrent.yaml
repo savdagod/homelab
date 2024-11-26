@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: qbittorrent
+  name: qbittorrent
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qbittorrent
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: qbittorrent
+    spec:
+      containers:
+        - env:
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: LAN_NETWORK
+              value: '10.0.0.0/8'
+            - name: WEBUI_PORT
+              value: '8080'
+            - name: VPN_ENABLED
+              value: 'yes'
+            - name: VON_CLIENT
+              value: 'openvpn'
+            - name: VPN_PROV
+              value: 'custom'
+            - name: VPN_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: media-secret-vpn
+                  key: password
+            - name: VPN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: media-secret-vpn
+                  key: username
+          image: binhex/arch-qbittorrentvpn:latest
+          name: qbittorrent
+          securityContext:
+            privileged: true  
+          ports:
+            - containerPort: 8080
+            - containerPort: 8118
+            - containerPort: 9118
+            - containerPort: 58946
+            - containerPort: 58946
+              protocol: UDP
+          volumeMounts:
+            - mountPath: /config
+              subPath: qbittorrent-config
+              name: config
+            - mountPath: /data
+              name: media
+      restartPolicy: Always
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: nfs-media-pvc
+        - name: config
+          persistentVolumeClaim:
+            claimName: local-media-pvc      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: qbittorrent
+  name: qbittorrent
+  namespace: media
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
+  selector:
+    app: qbittorrent
+

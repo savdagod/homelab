@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: unpoller
+  name: unpoller
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unpoller
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: unpoller
+    spec:
+      containers:
+        - image: ghcr.io/unpoller/unpoller:latest
+          name: unpoller
+          env:
+            - name: UP_INFLUXDB_DISABLE
+              value: 'true'
+            - name: UP_POLLER_DEBUG
+              value: 'false'
+            - name: UP_UNIFI_DYNAMIC
+              value: 'false'
+            - name: UP_PROMETHEUS_HTTP_LISTEN
+              value: 0.0.0.0:9130
+            - name: UP_PROMETHEUS_NAMESPACE
+              value: 'unpoller'
+            - name: UP_UNIFI_CONTROLLER_0_PASS
+              value: 'unpoller1234'
+            - name: UP_UNIFI_CONTROLLER_0_SAVE_ALARMS
+              value: 'true'
+            - name: UP_UNIFI_CONTROLLER_0_SAVE_ANOMALIES
+              value: 'true'
+            - name: UP_UNIFI_CONTROLLER_0_SAVE_DPI
+              value: 'true'
+            - name: UP_UNIFI_CONTROLLER_0_SAVE_EVENTS
+              value: 'true'
+            - name: UP_UNIFI_CONTROLLER_0_SAVE_IDS
+              value: 'true'
+            - name: UP_UNIFI_CONTROLLER_0_SAVE_SITES
+              value: 'true'
+            - name: UP_UNIFI_CONTROLLER_0_URL
+              value: 'https://unifi.sysadmin:8443'
+            - name: UP_UNIFI_CONTROLLER_0_USER
+              value: 'unpoller'
+          ports:
+            - containerPort: 9130
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: unpoller
+  name: unpoller
+  namespace: monitoring
+spec:
+  ports:
+    - name: "9130"
+      port: 9130
+      targetPort: 9130
+  type: ClusterIP
+  selector:
+    app: unpoller
+
