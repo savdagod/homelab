@@ -1,0 +1,25 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: monitoring-ingress-http
+  namespace: monitoring
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`prometheus.local.io`)
+      services:
+        - kind: Service
+          name: prometheus
+          port: 9090
+    - kind: Rule
+      match: Host(`grafana.local.io`)
+      services:
+        - kind: Service
+          name: grafana
+          port: 3001
+
+
+    
+    

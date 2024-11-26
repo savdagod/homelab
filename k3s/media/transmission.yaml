@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: transmission
+  name: transmission
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transmission
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: transmission
+    spec:
+      containers:
+        - env:
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: TZ
+              value: 'Etc/UTC'
+            - name: LOCAL_NETWORK
+              value: '10.0.0.0/8'
+            - name: OPENVPN_PROVIDER
+              value: 'expressvpn'
+            - name: OPENVPN_CONFIG
+              value: 'my_expressvpn_usa_-_washington_dc_udp'
+            - name: OPENVPN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: media-secret-vpn
+                  key: password
+            - name: OPENVPN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: media-secret-vpn
+                  key: username
+          image: haugene/transmission-openvpn:latest
+          name: transmission
+          securityContext:
+            privileged: true  
+          ports:
+            - containerPort: 9091
+          volumeMounts:
+            - mountPath: /config
+              subPath: transmission-config
+              name: config
+            - mountPath: /data
+              name: media
+      restartPolicy: Always
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: nfs-media-pvc
+        - name: config
+          persistentVolumeClaim:
+            claimName: local-media-pvc      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: transmission
+  name: transmission
+  namespace: media
+spec:
+  ports:
+    - name: "9091"
+      port: 9091
+      targetPort: 9091
+  type: LoadBalancer
+  selector:
+    app: transmission
+
