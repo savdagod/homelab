@@ -2,24 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: unpoller
-  name: unpoller
+    app: unifi-poller
+  name: unifi-poller
   namespace: monitoring
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: unpoller
+      app: unifi-poller
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: unpoller
+        app: unifi-poller
     spec:
       containers:
         - image: ghcr.io/unpoller/unpoller:latest
-          name: unpoller
+          name: uunifi-poller
           env:
             - name: UP_INFLUXDB_DISABLE
               value: 'true'
@@ -58,8 +58,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: unpoller
-  name: unpoller
+    app: unifi-poller
+  name: unifi-poller
   namespace: monitoring
 spec:
   ports:
@@ -68,5 +68,5 @@ spec:
       targetPort: 9130
   type: ClusterIP
   selector:
-    app: unpoller
+    app: unifi-poller
 
