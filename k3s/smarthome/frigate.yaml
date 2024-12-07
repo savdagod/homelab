@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frigate
+  name: frigate
+  namespace: smarthome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frigate
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: frigate
+    spec:
+      containers:
+        - name: frigate
+          env:
+            - name: FRIGATE_MQTT_PASSWORD
+              value: supr&N9J
+            - name: FRIGATE_MQTT_USER
+              value: mqtt
+            - name: FRIGATE_PASSWORD
+              value: frigate$1
+            - name: FRIGATE_USER
+              value: frigate
+            - name: LIBVA_DRIVER_NAME
+              value: i965
+          image: ghcr.io/blakeblackshear/frigate:stable
+          securityContext:
+            privileged: true
+          ports:
+            - containerPort: 5000
+            - containerPort: 8554
+            - containerPort: 8555
+            - containerPort: 8555
+              protocol: UDP
+          volumeMounts:
+            - mountPath: /dev/bus/usb
+              name: coral
+            - mountPath: /config
+              subPath: frigate/config
+              name: config
+            - mountPath: /media/frigate
+              subPath: frigate/storage
+              name: config
+            - mountPath: /dev/shm
+              name: shared-memory
+            - mountPath: /tmp/cache
+              name: cache-memory
+            - mountPath: /etc/localtime
+              name: time
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - name: coral
+          hostPath:
+            path: /dev/bus/usb
+        - name: shared-memory
+          emptyDir:
+            medium: Memory
+            sizeLimit: 256Mi
+        - name: cache-memory
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1000Mi
+        - name: time
+          hostPath:
+            path: /etc/localtime
+        - name: config
+          persistentVolumeClaim:
+            claimName: local-smarthome-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frigate
+  name: frigate
+  namespace: smarthome
+spec:
+  ports:
+    - name: "5000"
+      port: 5000
+      targetPort: 5000
+    - name: "8554"
+      port: 8554
+      targetPort: 8554
+    - name: "8555"
+      port: 8555
+      targetPort: 8555
+    - name: 8555-udp
+      port: 8555
+      protocol: UDP
+      targetPort: 8555
+  type: LoadBalancer
+  selector:
+    app: frigate
