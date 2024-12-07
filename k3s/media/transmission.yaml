@@ -27,6 +27,10 @@ spec:
               value: 'Etc/UTC'
             - name: LOCAL_NETWORK
               value: '10.0.0.0/8'
+            - name: TRANSMISSION_DOWNLOAD_DIR
+              value: "/data/torrents"
+            - name: TRANSMISSION_WEB_UI
+              value: "flood-for-transmission"
             - name: OPENVPN_PROVIDER
               value: 'expressvpn'
             - name: OPENVPN_CONFIG

@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nut-upsd
+  name: nut-upsd
+  namespace: sysadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nut-upsd
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nut-upsd
+    spec:
+      containers:
+        - env:
+            - name: API_PASSWORD
+              value: tx2PX@2uki2j9cux
+          image: instantlinux/nut-upsd
+          name: nut-upsd
+          ports:
+            - containerPort: 3493
+              protocol: TCP
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /dev/usb/hiddev0
+              name: ups
+      nodeSelector:
+         kubernetes.io/hostname: frigate
+      restartPolicy: Always
+      volumes:
+        - name: ups
+          hostPath:
+            path: /dev/usb/hiddev0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nut-upsd
+  name: nut-upsd
+  namespace: sysadmin
+spec:
+  ports:
+    - name: "3493"
+      port: 3493
+      targetPort: 3493
+  type: LoadBalancer
+  selector:
+    app: nut-upsd
+

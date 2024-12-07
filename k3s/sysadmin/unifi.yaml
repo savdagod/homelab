@@ -87,7 +87,7 @@ spec:
       port: 8443
       targetPort: 8443
     - name: "8080"
-      port: 8082
+      port: 8080
       targetPort: 8080
     - name: "3478"
       port: 3478
