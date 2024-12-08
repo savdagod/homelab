@@ -54,10 +54,10 @@ metadata:
   namespace: media
 spec:
   ports:
-    - name: "6767"
-      port: 6767
+    - name: "webui"
+      port: 80
       targetPort: 6767
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: bazarr
 

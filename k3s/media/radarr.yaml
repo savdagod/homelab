@@ -54,10 +54,10 @@ metadata:
   namespace: media
 spec:
   ports:
-    - name: "7878"
-      port: 7878
+    - name: "webui"
+      port: 80
       targetPort: 7878
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: radarr
 

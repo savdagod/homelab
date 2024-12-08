@@ -6,6 +6,7 @@ metadata:
 spec:
   entryPoints:
     - web
+    - websecure
   routes:
     - kind: Rule
       match: Host(`plex.local.io`)
@@ -18,29 +19,34 @@ spec:
       services:
         - kind: Service
           name: jackett
-          port: 9117
+          port: 80
+          scheme: http
     - kind: Rule
       match: Host(`radarr.local.io`)
       services:
         - kind: Service
           name: radarr
-          port: 7878
+          port: 80
+          scheme: http
     - kind: Rule
       match: Host(`sonarr.local.io`)
       services:
         - kind: Service
           name: sonarr
-          port: 8989
+          port: 80
+          scheme: http
     - kind: Rule
       match: Host(`transmission.local.io`)
       services:
         - kind: Service
           name: transmission
-          port: 9091
+          port: 80
+          scheme: http
     - kind: Rule
       match: Host(`bazarr.local.io`)
       services:
         - kind: Service
           name: bazarr
-          port: 6767
+          port: 80
+          scheme: http
 

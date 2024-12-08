@@ -49,10 +49,10 @@ metadata:
   namespace: media
 spec:
   ports:
-    - name: "9117"
-      port: 9117
+    - name: "webui"
+      port: 80
       targetPort: 9117
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: jackett
 

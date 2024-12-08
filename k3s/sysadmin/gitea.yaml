@@ -67,7 +67,7 @@ spec:
     - name: "22"
       port: 222
       targetPort: 22
-  type: LoadBalancer
+        #type: LoadBalancer
   selector:
     app: gitea
 

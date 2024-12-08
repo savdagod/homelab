@@ -72,21 +72,18 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: local-sysadmin-pvc        
+            claimName: local-sysadmin-pvc   
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app: unifi
-  name: unifi
+  name: unifi-loadbalancer
   namespace: sysadmin
 spec:
   ports:
-    - name: "8443"
-      port: 8443
-      targetPort: 8443
-    - name: "8080"
+    - name: "inform"
       port: 8080
       targetPort: 8080
     - name: "3478"
@@ -98,4 +95,19 @@ spec:
   type: LoadBalancer
   selector:
     app: unifi
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: unifi
+  name: unifi-clusterip
+  namespace: sysadmin
+spec:
+  ports:
+    - name: "webui"
+      port: 443
+      targetPort: 8443
+  type: ClusterIP
+  selector:
+    app: unifi

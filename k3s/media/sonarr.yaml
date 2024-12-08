@@ -54,8 +54,8 @@ metadata:
   namespace: media
 spec:
   ports:
-    - name: "8989"
-      port: 8989
+    - name: "webui"
+      port: 80
       targetPort: 8989
   type: LoadBalancer
   selector:
