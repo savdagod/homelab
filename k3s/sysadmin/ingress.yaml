@@ -12,7 +12,8 @@ spec:
       services:
         - kind: Service
           name: gitea
-          port: 3000
+          port: 80
+          scheme: http
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: ServersTransport
@@ -29,6 +30,7 @@ metadata:
   namespace: sysadmin
 spec:
   entryPoints:
+    - web
     - websecure
   routes:
     - kind: Rule

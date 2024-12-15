@@ -29,22 +29,22 @@ spec:
               value: '10.0.0.0/8'
             - name: TRANSMISSION_DOWNLOAD_DIR
               value: "/data/torrents"
-            - name: TRANSMISSION_WEB_UI
-              value: "flood-for-transmission"
+            #- name: TRANSMISSION_WEB_UI
+            #  value: "flood-for-transmission"
             - name: OPENVPN_PROVIDER
-              value: 'expressvpn'
+              value: 'custom'
             - name: OPENVPN_CONFIG
-              value: 'my_expressvpn_usa_-_washington_dc_udp'
-            - name: OPENVPN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: media-secret-vpn
-                  key: password
-            - name: OPENVPN_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: media-secret-vpn
-                  key: username
+              value: 'AirVPN_United-States_UDP-443-Entry3'
+            # - name: OPENVPN_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: media-secret-vpn
+            #       key: password
+            # - name: OPENVPN_USERNAME
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: media-secret-vpn
+            #       key: username
           image: haugene/transmission-openvpn:latest
           name: transmission
           securityContext:
@@ -54,6 +54,9 @@ spec:
           volumeMounts:
             - mountPath: /config
               subPath: transmission-config
+              name: config
+            - mountPath: /etc/openvpn/custom
+              subPath: transmission-config/custom
               name: config
             - mountPath: /data
               name: media

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: local-frigate-pv
+  name: local-smarthome-pv
   namespace: smarthome
 spec:
   capacity:
@@ -11,7 +11,7 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   local:
-    path: /media/frigate
+    path: /opt
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -24,7 +24,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: local-frigate-pvc
+  name: local-smarthome-pvc
   namespace: smarthome
 spec:
   accessModes:

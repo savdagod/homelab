@@ -31,6 +31,11 @@ spec:
             - name: LIBVA_DRIVER_NAME
               value: i965
           image: ghcr.io/blakeblackshear/frigate:stable
+          resources:
+            requests:
+              ephemeral-storage: "1Gi"
+            limits:
+              ephemeral-storage: "2Gi"
           securityContext:
             privileged: true
           ports:
@@ -46,8 +51,7 @@ spec:
               subPath: frigate/config
               name: config
             - mountPath: /media/frigate
-              subPath: frigate/storage
-              name: config
+              name: storage
             - mountPath: /dev/shm
               name: shared-memory
             - mountPath: /tmp/cache
@@ -74,6 +78,9 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: local-smarthome-pvc
+        - name: storage
+          persistentVolumeClaim:
+            claimName: local-frigate-pvc
 ---
 apiVersion: v1
 kind: Service

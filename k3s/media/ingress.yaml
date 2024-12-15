@@ -49,4 +49,10 @@ spec:
           name: bazarr
           port: 80
           scheme: http
-
+    - kind: Rule
+      match: Host(`prowlarr.local.io`)
+      services:
+        - kind: Service
+          name: prowlarr
+          port: 80
+          scheme: http

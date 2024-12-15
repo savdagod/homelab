@@ -1,0 +1,26 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: smarthone-ingress
+  namespace: smarthome
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`z2m.local.io`)
+      services:
+        - kind: Service
+          name: zigbee2mqtt
+          port: 8081
+    - kind: Rule
+      match: Host(`zwave.local.io`)
+      services:
+        - kind: Service
+          name: zwavejsui-clusterip
+          port: 80
+          scheme: http
+
+    
+    

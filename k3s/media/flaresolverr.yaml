@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: flaresolverr
+  name: flaresolverr
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flaresolverr
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: flaresolverr
+    spec:
+      containers:
+        - name: flaresolverr
+          env:
+            - name: LOG_LEVEL
+              value: "info"
+                # - name: LOG_HTML
+              # value: "false"
+              #- name: CAPTCHA_SOLVER
+              #  value: "none"
+            - name: TZ
+              value: America/New_York
+          image: flaresolverr/flaresolverr:latest
+          securityContext:
+            privileged: true
+          ports:
+            - containerPort: 8191
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: flaresolverr
+  name: flaresolverr
+  namespace: media
+spec:
+  ports:
+    - name: "8191"
+      port: 8191
+      targetPort: 8191
+  type: ClusterIP
+  selector:
+    app: flaresolverr
+

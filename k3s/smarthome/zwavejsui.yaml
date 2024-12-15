@@ -51,16 +51,29 @@ kind: Service
 metadata:
   labels:
     app: zwavejsui
-  name: zwavejsui
+  name: zwavejsui-loadbalancer
   namespace: smarthome
 spec:
   ports:
-    - name: "8091"
-      port: 8091
-      targetPort: 8091
-    - name: "3000"
-      port: 3002
+    - name: "websocket"
+      port: 3000
       targetPort: 3000
   type: LoadBalancer
+  selector:
+    app: zwavejsui
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: zwavejsui
+  name: zwavejsui-clusterip
+  namespace: smarthome
+spec:
+  ports:
+    - name: "webui"
+      port: 80
+      targetPort: 8091
+  type: ClusterIP
   selector:
     app: zwavejsui
