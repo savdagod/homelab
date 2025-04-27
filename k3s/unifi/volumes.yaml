@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: local-pv
-  namespace: sysadmin
+  namespace: unifi
 spec:
   capacity:
     storage: 5Gi
@@ -24,8 +24,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: local-sysadmin-pvc
-  namespace: sysadmin
+  name: local-unifi-pvc
+  namespace: unifi
 spec:
   accessModes:
     - ReadWriteMany

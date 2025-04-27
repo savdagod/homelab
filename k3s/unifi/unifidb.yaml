@@ -4,7 +4,7 @@ metadata:
   labels:
     app: unifi-db
   name: unifi-db
-  namespace: sysadmin
+  namespace: unifi
 spec:
   replicas: 1
   selector:
@@ -54,7 +54,7 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: local-sysadmin-pvc
+            claimName: local-unifi-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -62,7 +62,7 @@ metadata:
   labels:
     app: unifi-db
   name: unifi-db
-  namespace: sysadmin
+  namespace: unifi
 spec:
   ports:
     - name: "27017"

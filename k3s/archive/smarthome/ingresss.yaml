@@ -21,6 +21,12 @@ spec:
           name: zwavejsui-clusterip
           port: 80
           scheme: http
-
+    - kind: Rule
+      match: Host(`lubelogger.local.io`)
+      services:
+        - kind: Service
+          name: lubelogger
+          port: 80
+          scheme: http
     
     

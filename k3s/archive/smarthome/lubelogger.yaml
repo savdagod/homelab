@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: lubelogger
+  name: lubelogger
+  namespace: smarthome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lubelogger
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: lubelogger
+    spec:
+      containers:
+        - env:
+            - name: LANG
+              value: en_US.UTF-8
+            - name: LC_ALL
+              value: en_US.UTF-8
+            - name: LOGGING__LOGLEVEL__DEFAULT
+              value: Error
+            - name: MailConfig__EmailFrom
+              value: bjt.homelab@gmail.com
+            - name: MailConfig__EmailServer
+              value: smtp.gmail.com
+            - name: MailConfig__Password
+              value: figj gnen lrnb goal
+            - name: MailConfig__Port
+              value: "587"
+            - name: MailConfig__UseSSL
+              value: "true"
+            - name: MailConfig__Username
+              value: bjt.homelab@gmail.com
+            - name: TZ
+              value: America/New_York
+          image: ghcr.io/hargata/lubelogger:latest
+          name: lubelogger
+          securityContext:
+            privileged: true
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /App/config
+              subPath: lubelogger/config
+              name: config
+            - mountPath: /App/data
+              subPath: lubelogger/data
+              name: config
+            - mountPath: /App/wwwroot/translations
+              subPath: lubelogger/translations
+              name: config
+            - mountPath: /App/wwwroot/documents
+              subPath: lubelogger/documents
+              name: config
+            - mountPath: /App/wwwroot/images
+              subPath: lubelogger/images
+              name: config
+            - mountPath: /App/wwwroot/temp
+              subPath: lubelogger/temp
+              name: config
+            - mountPath: /App/log
+              subPath: lubelogger/log
+              name: config
+            - mountPath: /root/.aspnet/DataProtection-Keys
+              subPath: lubelogger/keys
+              name: config
+      restartPolicy: Always
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: local-smarthome-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: lubelogger
+  name: lubelogger
+  namespace: smarthome
+spec:
+  ports:
+    - name: "webui"
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+  selector:
+    app: lubelogger
+

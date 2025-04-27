@@ -1,8 +1,8 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: sysadmin-ingress-http
-  namespace: sysadmin
+  name: unifi-ingress-http
+  namespace: unifi
 spec:
   entryPoints:
     - web
@@ -19,15 +19,15 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: ServersTransport
 metadata:
   name: skipverify
-  namespace: sysadmin
+  namespace: unifi
 spec:
   insecureSkipVerify: true
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: sysadmin-ingress-https
-  namespace: sysadmin
+  name: unifi-ingress-https
+  namespace: unifi
 spec:
   entryPoints:
     - web

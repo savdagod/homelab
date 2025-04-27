@@ -47,6 +47,11 @@ spec:
             #       key: username
           image: haugene/transmission-openvpn:latest
           name: transmission
+          resources:
+            requests:
+              ephemeral-storage: "1Gi"
+            limits:
+              ephemeral-storage: "2Gi"
           securityContext:
             privileged: true  
           ports:
